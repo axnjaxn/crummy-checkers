@@ -2,18 +2,28 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class CheckersAI {
+	public static class NoMovesLeftException extends Exception {
+		private static final long serialVersionUID = -1782064012078589916L;
+
+		public String getMessage() {
+			return "No moves left";
+		}
+	}
+	
 	private static Random random = new Random();
 
 	public static int getScore(GameState state) {
 		int score = 0;
 		for (int r = 0; r < 8; r++)
 			for (int c = 0; c < 8; c++)
-				if (state.getPlayer(r, c) == 1) score++;
-				else if (state.getPlayer(r, c) == 2) score--;
+				if (state.get(r, c) == 'o') score++;
+				else if (state.get(r, c) == 'O') score += 2;
+				else if (state.get(r, c) == 't') score--;
+				else if (state.get(r, c) == 'T') score -= 2;
 		return score;
 	}
 
-	public static GameState.Move getBestMove(GameState state/*, int lookahead*/) {
+	public static GameState.Move getBestMove(GameState state/*, int lookahead*/) throws NoMovesLeftException {
 		//Generate all legal moves that player one can make
 		ArrayList<GameState.Move> moves = new ArrayList<GameState.Move>();
 		for (int r = 0; r < 8; r++)
@@ -68,7 +78,7 @@ public class CheckersAI {
 				}
 			} catch (GameState.IllegalMoveException e) {continue;}
 
-		if (bestMoves.isEmpty()) return null;//No moves!
+		if (bestMoves.isEmpty()) throw new NoMovesLeftException();
 		
 		//Then return a winner chosen randomly from the best moves
 		return bestMoves.get(random.nextInt(bestMoves.size()));

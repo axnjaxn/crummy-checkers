@@ -113,7 +113,10 @@ public class GameState {
 		}
 
 		//Execute basic movement
-		set(m.to.row, m.to.col, get(m.from.row, m.from.col));
+		if (m.to.row == 0 && get(m.from.row, m.from.col) == 'o') set(m.to.row, m.to.col, 'O');
+		else if (m.to.row == 7 && get(m.from.row, m.from.col) == 't') set(m.to.row, m.to.col, 'T');
+		else set(m.to.row, m.to.col, get(m.from.row, m.from.col));
+		
 		set(m.from.row, m.from.col, 'E');
 	}
 
