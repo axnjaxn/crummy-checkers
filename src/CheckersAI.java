@@ -23,7 +23,7 @@ public class CheckersAI {
 		return score;
 	}
 
-	public static GameState.Move getBestMove(GameState state/*, int lookahead*/) throws NoMovesLeftException {
+	public static GameState.Move getBestMove(GameState state, int lookahead) throws NoMovesLeftException {
 		//Generate all legal moves that player one can make
 		ArrayList<GameState.Move> moves = new ArrayList<GameState.Move>();
 		for (int r = 0; r < 8; r++)
@@ -66,7 +66,16 @@ public class CheckersAI {
 		for (int i = 0; i < moves.size(); i++)
 			try {
 				GameState next = new GameState(state, moves.get(i));
-				int score = getScore(next);
+				int score;
+				if (lookahead == 0) score = getScore(next);
+				else {
+					//uf
+					next.flip();
+					GameState.Move min = getBestMove(next, lookahead - 1);
+					next.applyMove(min);
+					next.flip();
+					score = getScore(next);
+				}
 
 				if (score == bscore) {
 					bestMoves.add(moves.get(i));
@@ -82,30 +91,5 @@ public class CheckersAI {
 		
 		//Then return a winner chosen randomly from the best moves
 		return bestMoves.get(random.nextInt(bestMoves.size()));
-	}
-
-	public static void main(String[] args) {
-		GameState state = GameState.initialBoard();
-		try {
-			for (int i = 0; i < 10; i++) {
-				System.out.printf("Move %d\n", i);
-
-				GameState.Move m = CheckersAI.getBestMove(state);
-				state = new GameState(state, m);
-				System.out.println(state);
-
-				state.flip();
-				m = CheckersAI.getBestMove(state);
-				state = new GameState(state, m);
-				state.flip();
-				System.out.println(state);
-			}
-		} 
-		catch (NullPointerException e) {
-			System.out.println("Null pointer exception");
-		}
-		catch (Exception e) {
-			System.out.println("Exception: " + e.getMessage());
-		}
 	}
 };

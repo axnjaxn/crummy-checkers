@@ -67,7 +67,7 @@ public class FrontEnd extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				if (!p1move) state.flip();
 				try {								
-					GameState.Move m = CheckersAI.getBestMove(state);
+					GameState.Move m = CheckersAI.getBestMove(state, 4);
 					state = new GameState(state, m);				
 				} 
 				catch (GameState.IllegalMoveException e){
