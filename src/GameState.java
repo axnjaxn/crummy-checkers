@@ -32,11 +32,15 @@ public class GameState {
 	}
 
 	public static class Move {
-		public Location from;
-		public Location to;
+		public Location location;
+		public Move next;
 
-		public Move(Location from, Location to) {this.from = from; this.to = to;}
-		public String toString() {return from + " - " + to;}
+		public Location from() {return location;}
+		public Location to() {return next.location;}
+		
+		public Move(Location location, Move next) {this.location = location; this.next = next;}
+		public Move(Location from, Location to) {this(from, new Move(to, (Move)null));}
+		public String toString() {return from() + " - " + to();}
 	}
 
 	private char[][] board = new char[8][8];
@@ -58,34 +62,37 @@ public class GameState {
 	}
 
 	public boolean isLegal(Move m) {
+		Location from = m.from();
+		Location to = m.to();
+		
 		//If either move is off the board, it's illegal
-		if (!isOnBoard(m.to.row, m.to.col)
-				|| !isOnBoard(m.from.row, m.from.col)) return false;
+		if (!isOnBoard(to.row, to.col)
+				|| !isOnBoard(from.row, from.col)) return false;
 
 		//Or if it's moving from a non-checker square or onto an occupied square
-		if (get(m.from.row, m.from.col) == 'E'
-				|| get(m.from.row, m.from.col) == 'X'
-				|| get(m.to.row, m.to.col) != 'E') return false;
+		if (get(from.row, from.col) == 'E'
+				|| get(from.row, from.col) == 'X'
+				|| get(to.row, to.col) != 'E') return false;
 
 		//Compute distances and absolute distances
-		int dr = m.to.row - m.from.row;
+		int dr = to.row - from.row;
 		int adr = (dr > 0)? dr : -dr;
-		int dc = m.to.col - m.from.col;
+		int dc = to.col - from.col;
 		int adc = (dc > 0)? dc : -dc;
 
 		//Legal moves move diagonally, one or two squares
 		if (adr != adc || adr < 1 || adr > 2) return false;
 
 		//Player one pawns can only move up
-		if (dr > 0 && get(m.from.row, m.from.col) == 'o') return false;
+		if (dr > 0 && get(from.row, from.col) == 'o') return false;
 
 		//Player two pawns can only move down
-		if (dr < 0 && get(m.from.row, m.from.col) == 't') return false;
+		if (dr < 0 && get(from.row, from.col) == 't') return false;
 
 		//If jumping...
 		if (adr == 2) {			
-			Location jumped = new Location(m.from.row + (dr / adr), m.from.col + (dc / adc));
-			int fromPlayer = getPlayer(m.from.row, m.from.col);
+			Location jumped = new Location(from.row + (dr / adr), from.col + (dc / adc));
+			int fromPlayer = getPlayer(from.row, from.col);
 			int jumpedPlayer = getPlayer(jumped.row, jumped.col); 
 
 			//Can't jump empty squares, off-color squares, or your own team
@@ -98,26 +105,28 @@ public class GameState {
 
 	public void applyMove(Move m) throws IllegalMoveException {
 		if (!isLegal(m)) throw new IllegalMoveException(m);
+		Location to = m.to();
+		Location from = m.from();
 
 		//Compute distances and absolute distances
-		int dr = m.to.row - m.from.row;
+		int dr = to.row - from.row;
 		int adr = (dr > 0)? dr : -dr;
-		int dc = m.to.col - m.from.col;
+		int dc = to.col - from.col;
 		int adc = (dc > 0)? dc : -dc;
 
 		//Is it a jump?
 		if (adr > 1) {
 			//Find and set the jumped square to empty
-			Location jumped = new Location(m.from.row + (dr / adr), m.from.col + (dc / adc));
+			Location jumped = new Location(from.row + (dr / adr), from.col + (dc / adc));
 			set(jumped.row, jumped.col, 'E');
 		}
 
 		//Execute basic movement
-		if (m.to.row == 0 && get(m.from.row, m.from.col) == 'o') set(m.to.row, m.to.col, 'O');
-		else if (m.to.row == 7 && get(m.from.row, m.from.col) == 't') set(m.to.row, m.to.col, 'T');
-		else set(m.to.row, m.to.col, get(m.from.row, m.from.col));
+		if (to.row == 0 && get(from.row, from.col) == 'o') set(to.row, to.col, 'O');
+		else if (to.row == 7 && get(from.row, from.col) == 't') set(to.row, to.col, 'T');
+		else set(to.row, to.col, get(from.row, from.col));
 		
-		set(m.from.row, m.from.col, 'E');
+		set(from.row, from.col, 'E');
 	}
 
 	public GameState(String state){
