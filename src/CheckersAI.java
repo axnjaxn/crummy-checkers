@@ -64,7 +64,7 @@ public class CheckersAI {
 
 		//Now it's time to score them.
 		ArrayList<GameState.Move> bestMoves = new ArrayList<GameState.Move>();
-		int bscore = -99999;
+		int bscore = -999;
 		for (int i = 0; i < moves.size(); i++)
 			try {
 				GameState next = new GameState(state, moves.get(i));
