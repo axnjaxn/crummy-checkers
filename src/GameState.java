@@ -60,12 +60,19 @@ public class GameState {
 				+ "XEXEXEXE");
 	}
 
-	public GameState(GameState prev, Move m) throws IllegalMoveException {
+	public GameState(GameState prev, Move m) {
 		this(prev.toString());
-		applyMove(m);
+		try {
+			applyMove(m);
+		} catch (IllegalMoveException e) {
+			//Do nothing
+		}
 	}
 
 	public boolean isLegal(Move m) {
+		//A move must have both an origin and destination
+		if (m.next == null) return false;
+		
 		Location from = m.from();
 		Location to = m.to();
 		
@@ -103,11 +110,7 @@ public class GameState {
 			if (jumpedPlayer == 0 || jumpedPlayer == fromPlayer) return false;
 		}
 
-		try {
-			if (m.hasMore()) return new GameState(this, m.getFirst()).isLegal(m.getNext());
-		} catch (IllegalMoveException e) {
-			//This can never happen			
-		}
+		if (m.hasMore()) return new GameState(this, m.getFirst()).isLegal(m.getNext());
 		
 		//If all invalid cases are handled, then this must be valid!
 		return true;
@@ -137,6 +140,8 @@ public class GameState {
 		else set(to.row, to.col, get(from.row, from.col));
 		
 		set(from.row, from.col, 'E');
+		
+		if (m.hasMore()) applyMove(m.getNext());
 	}
 
 	public GameState(String state){

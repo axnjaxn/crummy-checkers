@@ -49,7 +49,7 @@ public class FrontEnd extends JFrame {
 						gfx.fillOval(rect.x + c * rect.width / 8, rect.y + r * rect.height / 8, rect.width / 8, rect.height / 8);
 						break;
 					case 'O':
-						gfx.setColor(new Color(128, 0, 0));
+						gfx.setColor(new Color(64, 0, 0));
 						gfx.fillOval(rect.x + c * rect.width / 8, rect.y + r * rect.height / 8, rect.width / 8, rect.height / 8);
 						break;
 					case 't':
@@ -57,7 +57,7 @@ public class FrontEnd extends JFrame {
 						gfx.fillOval(rect.x + c * rect.width / 8, rect.y + r * rect.height / 8, rect.width / 8, rect.height / 8);
 						break;
 					case 'T':
-						gfx.setColor(new Color(0, 0, 128));
+						gfx.setColor(new Color(0, 0, 64));
 						gfx.fillOval(rect.x + c * rect.width / 8, rect.y + r * rect.height / 8, rect.width / 8, rect.height / 8);
 						break;
 					case 'X':
@@ -86,19 +86,21 @@ public class FrontEnd extends JFrame {
 				GameState.Move move = new GameState.Move(selectLoc, newLoc);
 				try {
 					state.applyMove(move);
-					hasSelected = false;
-					state.flip();
-					try {
-						GameState.Move m = CheckersAI.getBestMove(state, 4);
-						state = new GameState(state, m);
-					}
-					catch (CheckersAI.NoMovesLeftException ex) {
-						JOptionPane.showMessageDialog(this, "No moves left!");
-					}					
-					state.flip();
-				} catch (GameState.IllegalMoveException ex) {
+				}
+				catch (GameState.IllegalMoveException ex) {
 					JOptionPane.showMessageDialog(this, "Illegal move.");
-				} 
+					return;
+				}
+				hasSelected = false;
+				state.flip();
+				try {
+					GameState.Move m = CheckersAI.getBestMove(state, 4);
+					state = new GameState(state, m);
+				}
+				catch (CheckersAI.NoMovesLeftException ex) {
+					JOptionPane.showMessageDialog(this, "No moves left!");
+				}					
+				state.flip(); 
 			}
 			repaint();
 		}
@@ -130,12 +132,9 @@ public class FrontEnd extends JFrame {
 				try {								
 					GameState.Move m = CheckersAI.getBestMove(state, 4);
 					state = new GameState(state, m);				
-				} 
-				catch (GameState.IllegalMoveException e){
-
 				}
 				catch (CheckersAI.NoMovesLeftException e) {
-
+					JOptionPane.showMessageDialog(null, "No moves left!");
 				}
 				if (!p1move) state.flip();
 				p1move = !p1move;
