@@ -13,14 +13,16 @@ public class CheckersAI {
 	private static Random random = new Random();
 
 	public static int getScore(GameState state) {
-		int score = 0;
+		int no = 0, nO = 0, nt = 0, nT = 0;
 		for (int r = 0; r < 8; r++)
 			for (int c = 0; c < 8; c++)
-				if (state.get(r, c) == 'o') score++;
-				else if (state.get(r, c) == 'O') score += 2;
-				else if (state.get(r, c) == 't') score--;
-				else if (state.get(r, c) == 'T') score -= 2;
-		return score;
+				if (state.get(r, c) == 'o') no++;
+				else if (state.get(r, c) == 'O') nO++;
+				else if (state.get(r, c) == 't') nt++;
+				else if (state.get(r, c) == 'T') nT++;
+		if (no + nO == 0) return -999999;
+		else if (nt + nT == 0) return 999999;
+		else return no + 2 * nO - nt - 2 * nT;
 	}
 
 	public static GameState.Move getBestMove(GameState state, int lookahead) throws NoMovesLeftException {
