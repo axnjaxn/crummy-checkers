@@ -41,7 +41,8 @@ public class GameState {
 		public Location from() {return location;}
 		public Location to() {return next.location;}
 		public boolean hasMore() {return next.next != null;}
-		public Move getNext() {return next;}
+		public Move getFirst() {return new Move(from(), to());}
+		public Move getNext() {return next;}		
 		
 		public String toString() {return from() + " - " + to();}
 	}
@@ -102,6 +103,12 @@ public class GameState {
 			if (jumpedPlayer == 0 || jumpedPlayer == fromPlayer) return false;
 		}
 
+		try {
+			if (m.hasMore()) return new GameState(this, m.getFirst()).isLegal(m.getNext());
+		} catch (IllegalMoveException e) {
+			//This can never happen			
+		}
+		
 		//If all invalid cases are handled, then this must be valid!
 		return true;
 	}
