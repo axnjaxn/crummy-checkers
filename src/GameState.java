@@ -1,5 +1,3 @@
-//package com.frillingJackson.checkersCheat;
-
 /*
  * Piece encoding:
  * O (red)   king for the dark pieces 

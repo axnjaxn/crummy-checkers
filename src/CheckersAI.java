@@ -33,7 +33,7 @@ public class CheckersAI {
 		else return no + 2 * nO - nt - 2 * nT;
 	}
 	
-	public ArrayList<GameState.Move> getSimpleMovesAt(GameState state, int r, int c) {
+	private ArrayList<GameState.Move> getSimpleMovesAt(GameState state, int r, int c) {
 		ArrayList<GameState.Move> moves = new ArrayList<GameState.Move>();
 		GameState.Location from = new GameState.Location(r, c);
 		GameState.Move move;
@@ -54,7 +54,7 @@ public class CheckersAI {
 		return moves;
 	}
 	
-	public ArrayList<GameState.Move> getJumpsAt(GameState state, int r, int c) {
+	private ArrayList<GameState.Move> getJumpsAt(GameState state, int r, int c) {
 		ArrayList<GameState.Move> moves = new ArrayList<GameState.Move>();
 		ArrayList<GameState.Move> moreJumps;
 		GameState.Location from = new GameState.Location(r, c);
@@ -115,7 +115,6 @@ public class CheckersAI {
 				int score;
 				if (lookahead == 0) score = getScore(next);
 				else {
-					//uf
 					next.flip();
 					GameState.Move min = getBestMove(next, lookahead - 1);
 					next.applyMove(min);
