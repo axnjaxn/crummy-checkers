@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class CheckersAI {
-	public static class NoMovesLeftException extends Exception {
+	public class NoMovesLeftException extends Exception {
 		private static final long serialVersionUID = -1782064012078589916L;
 
 		public String getMessage() {
@@ -10,9 +10,17 @@ public class CheckersAI {
 		}
 	}
 	
-	private static Random random = new Random();
+	private static CheckersAI instance = null;
+	private Random random = new Random();
+	
+	private CheckersAI() { }
+	
+	public static CheckersAI getInstance() {
+		if (instance == null) instance = new CheckersAI();
+		return instance;
+	}
 
-	public static int getScore(GameState state) {
+	public int getScore(GameState state) {
 		int no = 0, nO = 0, nt = 0, nT = 0;
 		for (int r = 0; r < 8; r++)
 			for (int c = 0; c < 8; c++)
@@ -25,7 +33,7 @@ public class CheckersAI {
 		else return no + 2 * nO - nt - 2 * nT;
 	}
 	
-	public static ArrayList<GameState.Move> getSimpleMovesAt(GameState state, int r, int c) {
+	public ArrayList<GameState.Move> getSimpleMovesAt(GameState state, int r, int c) {
 		ArrayList<GameState.Move> moves = new ArrayList<GameState.Move>();
 		GameState.Location from = new GameState.Location(r, c);
 		GameState.Move move;
@@ -46,7 +54,7 @@ public class CheckersAI {
 		return moves;
 	}
 	
-	public static ArrayList<GameState.Move> getJumpsAt(GameState state, int r, int c) {
+	public ArrayList<GameState.Move> getJumpsAt(GameState state, int r, int c) {
 		ArrayList<GameState.Move> moves = new ArrayList<GameState.Move>();
 		ArrayList<GameState.Move> moreJumps;
 		GameState.Location from = new GameState.Location(r, c);
@@ -88,7 +96,7 @@ public class CheckersAI {
 		return moves;
 	}
 
-	public static GameState.Move getBestMove(GameState state, int lookahead) throws NoMovesLeftException {
+	public GameState.Move getBestMove(GameState state, int lookahead) throws NoMovesLeftException {
 		//Generate all legal moves that player one can make
 		ArrayList<GameState.Move> moves = new ArrayList<GameState.Move>();
 		for (int r = 0; r < 8; r++)

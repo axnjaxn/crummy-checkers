@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 public class FrontEnd extends JFrame {
 	private MyPanel gpanel;
 
+	private CheckersAI ai = CheckersAI.getInstance();
 	private GameState state = GameState.initialBoard();
 	private boolean p1move = true;
 
@@ -94,7 +95,7 @@ public class FrontEnd extends JFrame {
 				hasSelected = false;
 				state.flip();
 				try {
-					GameState.Move m = CheckersAI.getBestMove(state, 4);
+					GameState.Move m = ai.getBestMove(state, 4);
 					state = new GameState(state, m);
 				}
 				catch (CheckersAI.NoMovesLeftException ex) {
@@ -130,7 +131,7 @@ public class FrontEnd extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				if (!p1move) state.flip();
 				try {								
-					GameState.Move m = CheckersAI.getBestMove(state, 4);
+					GameState.Move m = ai.getBestMove(state, 4);
 					state = new GameState(state, m);				
 				}
 				catch (CheckersAI.NoMovesLeftException e) {
