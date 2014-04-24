@@ -108,7 +108,7 @@ public class CheckersAI {
 
 		//Now it's time to score them.
 		ArrayList<GameState.Move> bestMoves = new ArrayList<GameState.Move>();
-		int bscore = -999;
+		int bscore = -9999999;
 		for (int i = 0; i < moves.size(); i++)
 			try {
 				GameState next = new GameState(state, moves.get(i));
@@ -116,8 +116,12 @@ public class CheckersAI {
 				if (lookahead == 0) score = getScore(next);
 				else {
 					next.flip();
-					GameState.Move min = getBestMove(next, lookahead - 1);
-					next.applyMove(min);
+					try {
+						GameState.Move min = getBestMove(next, lookahead - 1);
+						next.applyMove(min);
+					} catch (NoMovesLeftException e) {
+						continue;
+					}					
 					next.flip();
 					score = getScore(next);
 				}
